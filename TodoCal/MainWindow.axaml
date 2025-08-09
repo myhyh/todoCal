@@ -1,0 +1,59 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="TodoCal.MainWindow"
+        xmlns:sty="using:FluentAvalonia.Styling"
+        xmlns:ui="using:FluentAvalonia.UI.Controls"
+        xmlns:uip="using:FluentAvalonia.UI.Controls.Primitives"
+        xmlns:todoCal="clr-namespace:TodoCal"
+        Title="TodoCal"
+        x:DataType="todoCal:MainWindow">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" x:Name="TaskListColumn"/>
+            <ColumnDefinition Width="3*" x:Name="TasksColumn"/>
+            <ColumnDefinition Width="0*" x:Name="DetailColumn"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0" Background="#E6E6E6">
+            <TextBox Watermark="搜索"/>
+            <ui:NavigationView PaneDisplayMode="Left" IsPaneToggleButtonVisible="False" IsSettingsVisible="False" Padding="0,12">
+                <ui:NavigationView.MenuItems>
+                    <ui:NavigationViewItem Content="📅 日历"/>
+                    <ui:NavigationViewItemSeparator/>
+                    <ui:NavigationViewItem Content="日程1"/>
+                    <ui:NavigationViewItem Content="日程2"/>
+                </ui:NavigationView.MenuItems>
+            </ui:NavigationView>
+        </StackPanel>
+        <StackPanel Grid.Column="1" Background="#6579c6" PointerPressed="ClearCurrentTask">
+            <TextBox Margin="10,40,10,20" FontSize="30" FontWeight="UltraBold">标题</TextBox>
+            <ListBox ItemsSource="{Binding Tasks}" Name="TaskList">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border CornerRadius="10" Background="#FEFEFE" Padding="10">
+                            <DockPanel Background="#FEFEFE" LastChildFill="False">
+                                <CheckBox IsChecked="{Binding IsCompleted}" DockPanel.Dock="Left" Click="ToggleComplete"/>
+                                <TextBlock Text="{Binding Title}" VerticalAlignment="Center" PointerPressed="SetCurrentTask" DockPanel.Dock="Left" />
+                                <Button Content="⭐️" Command="{Binding StarCommand}"
+                                        CommandParameter="{Binding}" DockPanel.Dock="Right" BorderThickness="0"/>
+                            </DockPanel>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel >
+        
+        <DockPanel Grid.Column="2" DataContext="{x:Null}" Background="#FEFEFE" LastChildFill="False" IsVisible="False" Name="TaskDetail">
+            <DockPanel x:DataType="todoCal:TodoTask" DockPanel.Dock="Top">
+                <CheckBox IsChecked="{Binding IsCompleted}" DockPanel.Dock="Left" Click="ToggleComplete" />
+                <TextBlock Text="{Binding Title}" VerticalAlignment="Center" DockPanel.Dock="Left" />
+                <Button Content="⭐️" Command="{Binding StarCommand}" DockPanel.Dock="Right" BorderThickness="0"/>
+            </DockPanel>
+            <TextBox Watermark="添加步骤" Foreground="#5757D4" DockPanel.Dock="Top"></TextBox>
+            <TextBox Watermark="添加备注" DockPanel.Dock="Top"></TextBox>
+        </DockPanel>
+    </Grid>
+    
+</Window>
