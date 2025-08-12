@@ -6,16 +6,23 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using FluentAvalonia.UI.Input;
+using TodoCal.utils;
 
 namespace TodoCal;
-public class TodoTask {
-    public string Title { get; set; }
-    public bool IsCompleted { get; set; }
+public class TodoTask
+{
+    public TwoWayBindable<string> Title { get; set; } = new();
+    public TwoWayBindable<bool> IsCompleted { get; set; } = new();
     public ICommand StarCommand { get; set; }
     public TodoTask(string title)
     {
-        Title = title;
+        Title.Value = title;
         StarCommand = new PrintSomething();
+    }
+
+    public void ToggleComplete()
+    {
+        IsCompleted.Value = !IsCompleted.Value;
     }
 }
 
@@ -38,13 +45,20 @@ public class PrintSomething : ICommand
 public partial class MainWindow : Window
 {
     public List<TodoTask> Tasks { set; get; } = new();
-    private static TodoTask fakeNull = new TodoTask("");
-    public TodoTask Selected { get; set; } = fakeNull;
+    private static TodoTask fakeNull = new("");
+    private TodoTask Selected { get; set; } = fakeNull;
+
+    public TwoWayBindable<GridLength> 任务列表的列表栏宽度 { get; set; } = new();
+    public TwoWayBindable<GridLength> 任务列表栏宽度 { get; set; } = new();
+    public TwoWayBindable<GridLength> 任务详情栏宽度 { get; set; } = new();
     public MainWindow()
     {
         DataContext = this;
         Tasks.Add(new TodoTask("aaa"));
         Tasks.Add(new TodoTask("bbb"));
+        任务列表的列表栏宽度.Value = GridLength.Parse("1*");
+        任务列表栏宽度.Value = GridLength.Parse("3*");
+        任务详情栏宽度.Value = GridLength.Parse("0*");
         InitializeComponent();
         
     }
@@ -52,18 +66,11 @@ public partial class MainWindow : Window
     
     public void ToggleComplete(object sender,RoutedEventArgs args)
     {
-        if (Selected == null)
+        if (Selected == fakeNull)
         {
             return;
         }
-        if (Selected.IsCompleted)
-        {
-            Selected.IsCompleted = false;
-        }
-        else
-        {
-            Selected.IsCompleted = true;
-        }
+        Selected.ToggleComplete();
     }
 
     private void SetCurrentTask(object? sender, PointerPressedEventArgs e)
@@ -75,17 +82,32 @@ public partial class MainWindow : Window
             {
                 Selected = task;
                 TaskDetail.DataContext = task;
-                TaskDetail.IsVisible = true;
+                showTaskDetail();
                 return;
             }
         }
         TaskDetail.DataContext = fakeNull;
         TaskDetail.IsVisible = false;
+        hideTaskDetail();
+    }
+
+    private void showTaskDetail()
+    {
+        TaskDetail.IsVisible = true;
+        任务详情栏宽度.Value = GridLength.Parse("1.5*");
+        任务列表栏宽度.Value = GridLength.Parse("1.5*");
+    }
+
+    private void hideTaskDetail()
+    {
+        TaskDetail.IsVisible = false;
+        任务详情栏宽度.Value = GridLength.Parse("0*");
+        任务列表栏宽度.Value = GridLength.Parse("3*");
     }
 
     private void ClearCurrentTask(object? sender, PointerPressedEventArgs e)
     {
         TaskDetail.DataContext = fakeNull;
-        TaskDetail.IsVisible = false;
+        hideTaskDetail();
     }
 }
