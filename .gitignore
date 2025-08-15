@@ -1,6 +1,6 @@
+*.db
+*.db-shm
+*.db-wal
+.DS_Store
 bin/
 obj/
-/packages/
-riderModule.iml
-/_ReSharper.Caches/
-.idea

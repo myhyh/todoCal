@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using FluentAvalonia.UI.Input;
+using TodoCal.Db;
 using TodoCal.utils;
 
 namespace TodoCal;
@@ -60,7 +62,15 @@ public partial class MainWindow : Window
         任务列表栏宽度.Value = GridLength.Parse("3*");
         任务详情栏宽度.Value = GridLength.Parse("0*");
         InitializeComponent();
-        
+    }
+
+    private void loadData()
+    {
+        using (var db = new LocalSqlite())
+        {
+            var todoLists = db.TodoLists.Where(l => !l.IsDeleted).ToList();
+            
+        }
     }
 
     

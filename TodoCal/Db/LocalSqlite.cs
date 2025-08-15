@@ -19,6 +19,7 @@ public class TodoList
     public ulong Id { get; set; }
     public string Name { get; set; } = "";
     public List<Todo> Tasks { get; set; } = new();
+    public bool IsDeleted { get; set; }
 }
 
 public class Todo
